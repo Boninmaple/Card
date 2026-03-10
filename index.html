@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>产品库存卡</title>
+    <title>材料库存卡</title>
     <!-- 引入条形码专用库 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
     <style>
@@ -24,7 +24,7 @@
             position: relative;
         }
 
-        /* 3. 头部区域 (严格参照图片排版) */
+        /* 3. 头部区域 */
         .header {
             text-align: center;
             margin-bottom: 10px;
@@ -33,12 +33,12 @@
             min-height: 100px;
         }
 
-        /* Logo：绝对定位在左上角，与图片一致 */
+        /* Logo：绝对定位在左上角 */
         .logo-img {
             position: absolute;
             top: 5px;
             left: 0;
-            height: 45px; /* 可根据您的logo实际比例微调此处高度 */
+            height: 45px; 
             width: auto;
         }
 
@@ -62,10 +62,9 @@
             font-weight: bold;
             letter-spacing: 5px;
             margin: 0;
-            /* 移除了原本的下划线，以符合实体照片风格 */
         }
 
-        /* 4. 表格样式 (黑白极简风格，取消灰色背景) */
+        /* 4. 表格样式 */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -85,13 +84,6 @@
         .info-table td { height: 35px; }
         .record-table { border-top: none; }
         .record-table td { height: 28px; }
-
-        /* 备注列专属样式 */
-        .remark-cell {
-            vertical-align: top !important;
-            padding-top: 10px !important;
-            letter-spacing: 2px;
-        }
 
         /* 底部签字栏 */
         .footer-signatures {
@@ -115,37 +107,33 @@
 <div class="sheet-container">
     <!-- 头部区域 -->
     <div class="header">
-        <!-- 请确保 logo.jpg 与本网页文件在同一个文件夹内 -->
         <img src="logo.jpg" alt="Logo" class="logo-img">
         <h1 class="company-title">温州博江管件有限公司</h1>
-        <div class="card-name">产 品 库 存 卡</div>
+        <!-- 标题也同步改为了材料库存卡，如果您需要产品库存卡可直接修改此处 -->
+        <div class="card-name">材 料 库 存 卡</div>
         <!-- 右上角条形码 -->
         <svg id="barcode" class="barcode-svg"></svg>
     </div>
 
-    <!-- 第一部分：产品基础信息 (仿照图片 7 列布局) -->
+    <!-- 第一部分：产品基础信息 -->
     <table class="info-table">
         <colgroup>
-            <col style="width: 12%">
-            <col style="width: 21%">
-            <col style="width: 12%">
-            <col style="width: 21%">
-            <col style="width: 12%">
-            <col style="width: 15%">
-            <col style="width: 7%"> <!-- 备注列 -->
+            <col style="width: 11%">
+            <col style="width: 20%">
+            <col style="width: 11%">
+            <col style="width: 20%">
+            <col style="width: 11%">
+            <col style="width: 17%">
+            <col style="width: 10%"> <!-- 备注列 -->
         </colgroup>
         <tr>
             <td>名&nbsp;&nbsp;&nbsp;&nbsp;称</td>
             <td id="prod_name"></td>
-            <td>物料编码</td>
+            <td>材料种类</td>
             <td id="item_code"></td>
             <td>计量单位</td>
             <td id="unit">个</td>
-            <td rowspan="3" class="remark-cell">
-                备<br><br>注
-                <!-- 预留动态注入备注的空间 -->
-                <div id="remark" style="font-size:12px; margin-top:5px; text-align:left; letter-spacing:0;"></div>
-            </td>
+            <td>备&nbsp;&nbsp;注</td> <!-- 备注表头 -->
         </tr>
         <tr>
             <td>规&nbsp;&nbsp;&nbsp;&nbsp;格</td>
@@ -154,6 +142,10 @@
             <td id="material"></td>
             <td>存放地点</td>
             <td id="location"></td>
+            <!-- 合并下方两行的大格子，供手写填空 -->
+            <td rowspan="2" style="vertical-align: top; padding: 5px;">
+                <div id="remark" style="font-size:12px; text-align:left;"></div>
+            </td>
         </tr>
         <tr>
             <td>执行标准</td>
@@ -162,10 +154,11 @@
             <td id="maker_date"></td>
             <td>货 架 号</td>
             <td></td>
+            <!-- 第三行的第7列被上方的 rowspan="2" 覆盖，不写 <td> -->
         </tr>
     </table>
 
-    <!-- 第二部分：库存流水记录 (严格还原图片的复杂表头：含年月、产品等级ABCD) -->
+    <!-- 第二部分：库存流水记录 -->
     <table class="record-table">
         <colgroup>
             <col style="width: 4%">  <!-- 月 -->
@@ -222,7 +215,6 @@
             <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
         </tbody>
-        <!-- 还原图片底部的“库存合计”行 -->
         <tfoot>
             <tr>
                 <td colspan="6" style="text-align: center; letter-spacing: 5px;">库存合计</td>
@@ -235,7 +227,7 @@
         </tfoot>
     </table>
 
-    <!-- 第三部分：底部签字栏 (还原图片排版) -->
+    <!-- 第三部分：底部签字栏 -->
     <div class="footer-signatures">
         <div>主管：</div>
         <div>保管员：</div>
