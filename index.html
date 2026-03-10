@@ -14,40 +14,40 @@
             padding: 20px; 
             background: white;
             color: black;
-            font-size: 15px; 
+            font-size: 14px; 
         }
 
         /* 2. 打印容器 */
         .sheet-container {
-            max-width: 210mm;
+            max-width: 210mm; /* A4 宽度 */
             margin: 0 auto;
             position: relative;
         }
 
-        /* 3. 头部区域 */
+        /* 3. 头部区域 (严格参照图片排版) */
         .header {
             text-align: center;
             margin-bottom: 10px;
             position: relative;
-            padding-top: 25px;
-            min-height: 120px;
-            width: 100%;
+            padding-top: 10px;
+            min-height: 100px;
         }
 
-        /* Logo */
-        .logo-box {
-            position: absolute;
-            top: 20px;
-            left: 0;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center; 
-        }
+        /* Logo：绝对定位在左上角，与图片一致 */
         .logo-img {
-            height: 55px; 
+            position: absolute;
+            top: 5px;
+            left: 0;
+            height: 45px; /* 可根据您的logo实际比例微调此处高度 */
             width: auto;
-            display: block;
+        }
+
+        /* 条形码：定位在右上角 */
+        .barcode-svg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            max-height: 45px;
         }
 
         /* 标题 */
@@ -55,46 +55,53 @@
             font-size: 26px;
             font-weight: bold;
             letter-spacing: 2px;
-            margin: 0 auto 8px auto;
-            position: relative;
-            z-index: 1;
-            padding: 0 120px; 
+            margin: 0 0 10px 0;
         }
         .card-name {
             font-size: 22px;
             font-weight: bold;
             letter-spacing: 5px;
-            margin: 0 auto;
-            border-bottom: 2px solid black;
-            display: inline-block;
-            padding-bottom: 3px;
+            margin: 0;
+            /* 移除了原本的下划线，以符合实体照片风格 */
         }
 
-        /* 4. 表格样式 */
-        .grid-table {
+        /* 4. 表格样式 (黑白极简风格，取消灰色背景) */
+        table {
             width: 100%;
             border-collapse: collapse;
             border-spacing: 0;
-            border: 1px solid black;
-            margin-bottom: -1px; 
-            table-layout: fixed;
+            border: 1px solid #000;
         }
-        .grid-table th, .grid-table td {
-            border: 1px solid black;
-            padding: 4px 2px; 
+        th, td {
+            border: 1px solid #000;
             text-align: center;
             vertical-align: middle;
             font-weight: normal;
+            padding: 6px 2px; 
         }
-        .bg-gray {
-            background-color: #f0f0f0;
-            font-weight: bold;
-        }
-        .text-left { text-align: left !important; padding-left: 8px !important; }
-        .h-35 { height: 35px; } 
-        .h-30 { height: 30px; } 
-        .h-remarks { height: 50px; } 
         
+        /* 消除两个表格之间的双重边框 */
+        .info-table { border-bottom: none; }
+        .info-table td { height: 35px; }
+        .record-table { border-top: none; }
+        .record-table td { height: 28px; }
+
+        /* 备注列专属样式 */
+        .remark-cell {
+            vertical-align: top !important;
+            padding-top: 10px !important;
+            letter-spacing: 2px;
+        }
+
+        /* 底部签字栏 */
+        .footer-signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 15px;
+            padding: 0 30px;
+        }
+
         /* 5. 打印适配 */
         @media print {
             .no-print { display: none !important; }
@@ -105,161 +112,187 @@
 </head>
 <body>
 
-    <div class="sheet-container">
-        <!-- 头部区域 -->
-        <div class="header">
-            <div class="logo-box">
-                <img src="logo.jpg" alt="Logo" class="logo-img">
-            </div>
-            <h1 class="company-title">温州博江管件有限公司</h1>
-            <div class="card-name">产 品 库 存 卡</div>
-            
-            <!-- 右上角条形码 (用于扫码盘点) -->
-            <svg id="barcode" style="position: absolute; top: 10px; right: 0; max-width: 180px;"></svg>
-        </div>
+<div class="sheet-container">
+    <!-- 头部区域 -->
+    <div class="header">
+        <!-- 请确保 logo.jpg 与本网页文件在同一个文件夹内 -->
+        <img src="logo.jpg" alt="Logo" class="logo-img">
+        <h1 class="company-title">温州博江管件有限公司</h1>
+        <div class="card-name">产 品 库 存 卡</div>
+        <!-- 右上角条形码 -->
+        <svg id="barcode" class="barcode-svg"></svg>
+    </div>
 
-        <!-- 第一部分：产品基础信息 -->
-        <table class="grid-table">
-            <colgroup>
-                <col style="width: 15%">
-                <col style="width: 35%">
-                <col style="width: 15%">
-                <col style="width: 35%">
-            </colgroup>
-            <tr class="h-35">
-                <td class="bg-gray">产品名称</td>
-                <td id="prod_name"></td>
-                <td class="bg-gray">物料编码</td>
-                <td id="item_code"></td>
-            </tr>
-            <tr class="h-35">
-                <td class="bg-gray">规格型号</td>
-                <td id="spec"></td>
-                <td class="bg-gray">材&nbsp;&nbsp;&nbsp;&nbsp;质</td>
-                <td id="material"></td>
-            </tr>
-            <tr class="h-35">
-                <td class="bg-gray">制造标准</td>
-                <td id="standard"></td>
-                <td class="bg-gray">存放位置(仓位)</td>
-                <td id="location"></td>
-            </tr>
-            <tr class="h-35">
-                <td class="bg-gray">计量单位</td>
-                <td id="unit">个</td>
-                <td class="bg-gray">建卡日期</td>
-                <td id="maker_date"></td>
-            </tr>
-        </table>
+    <!-- 第一部分：产品基础信息 (仿照图片 7 列布局) -->
+    <table class="info-table">
+        <colgroup>
+            <col style="width: 12%">
+            <col style="width: 21%">
+            <col style="width: 12%">
+            <col style="width: 21%">
+            <col style="width: 12%">
+            <col style="width: 15%">
+            <col style="width: 7%"> <!-- 备注列 -->
+        </colgroup>
+        <tr>
+            <td>名&nbsp;&nbsp;&nbsp;&nbsp;称</td>
+            <td id="prod_name"></td>
+            <td>物料编码</td>
+            <td id="item_code"></td>
+            <td>计量单位</td>
+            <td id="unit">个</td>
+            <td rowspan="3" class="remark-cell">
+                备<br><br>注
+                <!-- 预留动态注入备注的空间 -->
+                <div id="remark" style="font-size:12px; margin-top:5px; text-align:left; letter-spacing:0;"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>规&nbsp;&nbsp;&nbsp;&nbsp;格</td>
+            <td id="spec"></td>
+            <td>材&nbsp;&nbsp;&nbsp;&nbsp;质</td>
+            <td id="material"></td>
+            <td>存放地点</td>
+            <td id="location"></td>
+        </tr>
+        <tr>
+            <td>执行标准</td>
+            <td id="standard"></td>
+            <td>建卡日期</td>
+            <td id="maker_date"></td>
+            <td>货 架 号</td>
+            <td></td>
+        </tr>
+    </table>
 
-        <!-- 第二部分：库存进出流水记录（留空供车间师傅手写） -->
-        <table class="grid-table">
-            <colgroup>
-                <col style="width: 12%"> <!-- 日期 -->
-                <col style="width: 15%"> <!-- 单据号 -->
-                <col style="width: 25%"> <!-- 摘要 -->
-                <col style="width: 10%"> <!-- 入库 -->
-                <col style="width: 10%"> <!-- 出库 -->
-                <col style="width: 10%"> <!-- 结存 -->
-                <col style="width: 18%"> <!-- 经手人/复核 -->
-            </colgroup>
-            <thead>
-                <tr class="bg-gray h-30">
-                    <td>日 期</td>
-                    <td>单据/流转单号</td>
-                    <td>摘要 (客户/工序/来源)</td>
-                    <td>入 库 (+)</td>
-                    <td>出 库 (-)</td>
-                    <td>结 存 (=)</td>
-                    <td>经手/仓管签字</td>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- 生成 18 行空表格供填写 -->
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr class="h-30"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            </tbody>
-        </table>
-
-        <!-- 第三部分：备注 -->
-        <table class="grid-table">
-            <colgroup>
-                <col style="width: 12%">
-                <col style="width: 88%">
-            </colgroup>
+    <!-- 第二部分：库存流水记录 (严格还原图片的复杂表头：含年月、产品等级ABCD) -->
+    <table class="record-table">
+        <colgroup>
+            <col style="width: 4%">  <!-- 月 -->
+            <col style="width: 4%">  <!-- 日 -->
+            <col style="width: 5%">  <!-- A -->
+            <col style="width: 5%">  <!-- B -->
+            <col style="width: 5%">  <!-- C -->
+            <col style="width: 5%">  <!-- D -->
+            <col style="width: 20%"> <!-- 摘要 -->
+            <col style="width: 13%"> <!-- 入库 -->
+            <col style="width: 13%"> <!-- 发出 -->
+            <col style="width: 13%"> <!-- 结存 -->
+            <col style="width: 13%"> <!-- 签字 -->
+        </colgroup>
+        <thead>
             <tr>
-                <td class="bg-gray h-remarks">盘点备注</td>
-                <td class="text-left" style="vertical-align: top; padding: 5px;" id="remark">此卡与实物存放在一处，进出库必须及时登记并核实结存数量。</td>
+                <td colspan="2">年</td>
+                <td colspan="4">产品等级</td>
+                <td rowspan="2">摘&nbsp;&nbsp;&nbsp;&nbsp;要</td>
+                <td rowspan="2">入库数量</td>
+                <td rowspan="2">发出数量</td>
+                <td rowspan="2">结存数量</td>
+                <td rowspan="2">经手人<br>签&nbsp;&nbsp;字</td>
             </tr>
-        </table>
+            <tr>
+                <td>月</td>
+                <td>日</td>
+                <td>A</td>
+                <td>B</td>
+                <td>C</td>
+                <td>D</td>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 生成 20 行空表格供填写 -->
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+        <!-- 还原图片底部的“库存合计”行 -->
+        <tfoot>
+            <tr>
+                <td colspan="6" style="text-align: center; letter-spacing: 5px;">库存合计</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- 第三部分：底部签字栏 (还原图片排版) -->
+    <div class="footer-signatures">
+        <div>主管：</div>
+        <div>保管员：</div>
+        <div>填表人：</div>
     </div>
+</div>
 
-    <!-- 打印按钮 -->
-    <div class="no-print" style="text-align: center; margin-top: 20px; margin-bottom: 50px;">
-        <button onclick="window.print()" style="padding: 10px 30px; background: #07c160; color: white; border: none; font-size: 18px; border-radius: 5px; cursor: pointer; font-weight: bold;">
-            🖨️ 打印库存卡
-        </button>
-    </div>
+<!-- 打印按钮 -->
+<div class="no-print" style="text-align: center; margin-top: 20px; margin-bottom: 50px;">
+    <button onclick="window.print()" style="padding: 10px 30px; background: #07c160; color: white; border: none; font-size: 18px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+        🖨️ 打印库存卡
+    </button>
+</div>
 
-    <script>
-        function getQueryParam(name) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name) || "";
-        }
+<script>
+    function getQueryParam(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name) || "";
+    }
 
-        // 填充库存基础数据
-        document.getElementById('prod_name').innerText = getQueryParam('prod_name');
-        document.getElementById('spec').innerText = getQueryParam('spec');
-        document.getElementById('material').innerText = getQueryParam('material');
-        document.getElementById('standard').innerText = getQueryParam('standard');
-        document.getElementById('item_code').innerText = getQueryParam('item_code'); // 物料编码/批号
-        document.getElementById('location').innerText = getQueryParam('location'); // 仓位
+    // 填充库存基础数据
+    document.getElementById('prod_name').innerText = getQueryParam('prod_name');
+    document.getElementById('spec').innerText = getQueryParam('spec');
+    document.getElementById('material').innerText = getQueryParam('material');
+    document.getElementById('standard').innerText = getQueryParam('standard');
+    document.getElementById('item_code').innerText = getQueryParam('item_code');
+    document.getElementById('location').innerText = getQueryParam('location'); 
+    
+    const customUnit = getQueryParam('unit');
+    if(customUnit) document.getElementById('unit').innerText = customUnit;
 
-        const customUnit = getQueryParam('unit');
-        if(customUnit) document.getElementById('unit').innerText = customUnit;
+    const customRemark = getQueryParam('remark');
+    if(customRemark) document.getElementById('remark').innerText = customRemark;
 
-        const customRemark = getQueryParam('remark');
-        if(customRemark) document.getElementById('remark').innerText = customRemark;
+    // 建卡日期自动生成今天
+    var today = new Date();
+    var dateStr = today.getFullYear() + "-" + (today.getMonth() + 1).toString().padStart(2, '0') + "-" + today.getDate().toString().padStart(2, '0');
+    document.getElementById('maker_date').innerText = dateStr;
 
-        // 建卡日期自动生成今天
-        var today = new Date();
-        var dateStr = today.getFullYear() + "-" + (today.getMonth() + 1).toString().padStart(2, '0') + "-" + today.getDate().toString().padStart(2, '0');
-        document.getElementById('maker_date').innerText = dateStr;
+    // 生成右上角条形码
+    const currentItemCode = getQueryParam('item_code');
+    if(currentItemCode) {
+        JsBarcode("#barcode", currentItemCode, {
+            format: "CODE128", 
+            width: 1.2,        
+            height: 40,        
+            displayValue: true,
+            fontSize: 12,      
+            margin: 5          
+        });
+    }
 
-        // ======= 生成右上角条形码 =======
-        // 库存卡用物料编码(item_code)作为条形码，方便日后拿扫码枪扫码入库
-        const currentItemCode = getQueryParam('item_code');
-        if(currentItemCode) {
-            JsBarcode("#barcode", currentItemCode, {
-                format: "CODE128", 
-                width: 1.5,        
-                height: 45,        
-                displayValue: true,
-                fontSize: 14,      
-                margin: 5          
-            });
-        }
+    // 延迟 0.8秒（等待条形码渲染完成）后，自动唤起浏览器打印窗口
+    setTimeout(function() {
+        window.print();
+    }, 800);
+</script>
 
-        // 延迟 0.8秒（等待条形码渲染完成）后，自动唤起浏览器打印窗口
-        setTimeout(function() {
-            window.print();
-        }, 800);
-    </script>
 </body>
 </html>
