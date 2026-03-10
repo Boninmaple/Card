@@ -70,13 +70,14 @@
             border-collapse: collapse;
             border-spacing: 0;
             border: 1px solid #000;
+            table-layout: fixed;
         }
         th, td {
             border: 1px solid #000;
             text-align: center;
             vertical-align: middle;
             font-weight: normal;
-            padding: 6px 2px; 
+            padding: 4px 2px; 
         }
         
         /* 消除两个表格之间的双重边框 */
@@ -109,7 +110,6 @@
     <div class="header">
         <img src="logo.jpg" alt="Logo" class="logo-img">
         <h1 class="company-title">温州博江管件有限公司</h1>
-        <!-- 标题也同步改为了材料库存卡，如果您需要产品库存卡可直接修改此处 -->
         <div class="card-name">材 料 库 存 卡</div>
         <!-- 右上角条形码 -->
         <svg id="barcode" class="barcode-svg"></svg>
@@ -124,7 +124,7 @@
             <col style="width: 20%">
             <col style="width: 11%">
             <col style="width: 17%">
-            <col style="width: 10%"> <!-- 备注列 -->
+            <col style="width: 10%"> <!-- 基础备注列 -->
         </colgroup>
         <tr>
             <td>名&nbsp;&nbsp;&nbsp;&nbsp;称</td>
@@ -133,7 +133,7 @@
             <td id="item_code"></td>
             <td>计量单位</td>
             <td id="unit">个</td>
-            <td>备&nbsp;&nbsp;注</td> <!-- 备注表头 -->
+            <td>卡片备注</td> 
         </tr>
         <tr>
             <td>规&nbsp;&nbsp;&nbsp;&nbsp;格</td>
@@ -142,7 +142,7 @@
             <td id="material"></td>
             <td>存放地点</td>
             <td id="location"></td>
-            <!-- 合并下方两行的大格子，供手写填空 -->
+            <!-- 卡片综合备注预留空间 -->
             <td rowspan="2" style="vertical-align: top; padding: 5px;">
                 <div id="remark" style="font-size:12px; text-align:left;"></div>
             </td>
@@ -154,24 +154,24 @@
             <td id="maker_date"></td>
             <td>货 架 号</td>
             <td></td>
-            <!-- 第三行的第7列被上方的 rowspan="2" 覆盖，不写 <td> -->
         </tr>
     </table>
 
-    <!-- 第二部分：库存流水记录 -->
+    <!-- 第二部分：库存流水记录 (已新增备注列) -->
     <table class="record-table">
         <colgroup>
             <col style="width: 4%">  <!-- 月 -->
             <col style="width: 4%">  <!-- 日 -->
-            <col style="width: 5%">  <!-- A -->
-            <col style="width: 5%">  <!-- B -->
-            <col style="width: 5%">  <!-- C -->
-            <col style="width: 5%">  <!-- D -->
-            <col style="width: 20%"> <!-- 摘要 -->
-            <col style="width: 13%"> <!-- 入库 -->
-            <col style="width: 13%"> <!-- 发出 -->
-            <col style="width: 13%"> <!-- 结存 -->
-            <col style="width: 13%"> <!-- 签字 -->
+            <col style="width: 4%">  <!-- A -->
+            <col style="width: 4%">  <!-- B -->
+            <col style="width: 4%">  <!-- C -->
+            <col style="width: 4%">  <!-- D -->
+            <col style="width: 17%"> <!-- 摘要 -->
+            <col style="width: 11%"> <!-- 入库 -->
+            <col style="width: 11%"> <!-- 发出 -->
+            <col style="width: 11%"> <!-- 结存 -->
+            <col style="width: 12%"> <!-- 签字 -->
+            <col style="width: 14%"> <!-- 备注 -->
         </colgroup>
         <thead>
             <tr>
@@ -181,7 +181,8 @@
                 <td rowspan="2">入库数量</td>
                 <td rowspan="2">发出数量</td>
                 <td rowspan="2">结存数量</td>
-                <td rowspan="2">经手人<br>签&nbsp;&nbsp;字</td>
+                <td rowspan="2">经手人<br>签 字</td>
+                <td rowspan="2">备&nbsp;&nbsp;注</td> <!-- 每行独有的备注列 -->
             </tr>
             <tr>
                 <td>月</td>
@@ -193,31 +194,32 @@
             </tr>
         </thead>
         <tbody>
-            <!-- 生成 20 行空表格供填写 -->
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <!-- 生成 20 行空表格供填写 (一行 12 个 td) -->
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
         </tbody>
         <tfoot>
             <tr>
                 <td colspan="6" style="text-align: center; letter-spacing: 5px;">库存合计</td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
