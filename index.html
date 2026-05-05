@@ -16,14 +16,12 @@
             color: black;
             font-size: 14px; 
         }
-        
         /* 2. 打印容器 */
         .sheet-container {
             max-width: 210mm; /* A4 宽度 */
             margin: 0 auto;
             position: relative;
         }
-        
         /* 3. 头部区域 */
         .header {
             text-align: center;
@@ -32,7 +30,6 @@
             padding-top: 10px;
             min-height: 100px;
         }
-        
         /* Logo：绝对定位在左上角 */
         .logo-img {
             position: absolute;
@@ -53,7 +50,6 @@
             text-align: left;
             width: 200px; /* 限制宽度，防止与中间标题重叠 */
         }
-        
         /* 条形码：定位在右上角 */
         .barcode-svg {
             position: absolute;
@@ -61,7 +57,6 @@
             right: 0;
             max-height: 45px;
         }
-        
         /* 标题 */
         .company-title {
             font-size: 26px;
@@ -69,14 +64,12 @@
             letter-spacing: 2px;
             margin: 0 0 10px 0;
         }
-        
         .card-name {
             font-size: 22px;
             font-weight: bold;
             letter-spacing: 5px;
             margin: 0;
         }
-        
         /* 4. 表格样式 */
         table {
             width: 100%;
@@ -85,6 +78,226 @@
             border: 1px solid #000;
             table-layout: fixed;
         }
-        
         th, td {
+            border: 1px solid #000;
+            text-align: center;
+            vertical-align: middle;
+            font-weight: normal;
+            padding: 4px 2px; 
+            
+            /* ✨ 新增：处理长文本自动换行 ✨ */
+            word-wrap: break-word;
+            word-break: break-all;
+            white-space: normal;
+        }
+        
+        /* 消除两个表格之间的双重边框 */
+        .info-table { border-bottom: none; }
+        .info-table td { height: 35px; }
+        .record-table { border-top: none; }
+        .record-table td { height: 28px; }
+        /* 底部签字栏 */
+        .footer-signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 15px;
+            padding: 0 30px;
+        }
+        /* 5. 打印适配 */
+        @media print {
+            .no-print { display: none !important; }
+            body { padding: 0; margin: 0; }
+            .sheet-container { width: 100%; max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="sheet-container">
+    <!-- 头部区域 -->
+    <div class="header">
+        <img src="logo.jpg" alt="Logo" class="logo-img">
+        
+        <!-- ✨ 新增：预留给左上角备注的空白 <div> ✨ -->
+        <div id="logo_remark" class="logo-remark"></div>
+        
+        <h1 class="company-title">温州博江管件有限公司</h1>
+        <div class="card-name">材 料 库 存 卡</div>
+        <!-- 右上角条形码 -->
+        <svg id="barcode" class="barcode-svg"></svg>
+    </div>
+    <!-- 第一部分：产品基础信息 -->
+    <table class="info-table">
+        <colgroup>
+            <col style="width: 11%">
+            <col style="width: 20%">
+            <col style="width: 11%">
+            <col style="width: 20%">
+            <col style="width: 11%">
+            <col style="width: 17%">
+            <col style="width: 10%"> <!-- 基础备注列 -->
+        </colgroup>
+        <tr>
+            <td>名&nbsp;&nbsp;&nbsp;&nbsp;称</td>
+            <td id="prod_name"></td>
+            <td>材料种类</td>
+            <td id="item_code"></td>
+            <td>计量单位</td>
+            <td id="unit">个</td>
+            <td>卡片备注</td> 
+        </tr>
+        <tr>
+            <td>规&nbsp;&nbsp;&nbsp;&nbsp;格</td>
+            <td id="spec"></td>
+            <td>材&nbsp;&nbsp;&nbsp;&nbsp;质</td>
+            <td id="material"></td>
+            <td>存放地点</td>
+            <td id="location"></td>
+            <!-- 卡片综合备注预留空间 -->
+            <td rowspan="2" style="vertical-align: top; padding: 5px;">
+                <div id="remark" style="font-size:12px; text-align:left;"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>执行标准</td>
+            <td id="standard"></td>
+            <td>建卡日期</td>
+            <td id="maker_date"></td>
+            <td>货 架 号</td>
+            <td></td>
+        </tr>
+    </table>
+    <!-- 第二部分：库存流水记录 (已新增备注列) -->
+    <table class="record-table">
+        <colgroup>
+            <col style="width: 4%">  <!-- 月 -->
+            <col style="width: 4%">  <!-- 日 -->
+            <col style="width: 4%">  <!-- A -->
+            <col style="width: 4%">  <!-- B -->
+            <col style="width: 4%">  <!-- C -->
+            <col style="width: 4%">  <!-- D -->
+            <col style="width: 17%"> <!-- 摘要 -->
+            <col style="width: 11%"> <!-- 入库 -->
+            <col style="width: 11%"> <!-- 发出 -->
+            <col style="width: 11%"> <!-- 结存 -->
+            <col style="width: 12%"> <!-- 签字 -->
+            <col style="width: 14%"> <!-- 备注 -->
+        </colgroup>
+        <thead>
+            <tr>
+                <td colspan="2">年</td>
+                <td colspan="4">产品等级</td>
+                <td rowspan="2">摘&nbsp;&nbsp;&nbsp;&nbsp;要</td>
+                <td rowspan="2">入库数量</td>
+                <td rowspan="2">发出数量</td>
+                <td rowspan="2">结存数量</td>
+                <td rowspan="2">经手人<br>签 字</td>
+                <td rowspan="2">备&nbsp;&nbsp;注</td> 
+            </tr>
+            <tr>
+                <td>月</td>
+                <td>日</td>
+                <td>A</td>
+                <td>B</td>
+                <td>C</td>
+                <td>D</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="6" style="text-align: center; letter-spacing: 5px;">库存合计</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+        </tfoot>
+    </table>
+    <!-- 第三部分：底部签字栏 -->
+    <div class="footer-signatures">
+        <div>主管：</div>
+        <div>保管员：</div>
+        <div>填表人：</div>
+    </div>
+</div>
+<!-- 打印按钮 -->
+<div class="no-print" style="text-align: center; margin-top: 20px; margin-bottom: 50px;">
+    <button onclick="window.print()" style="padding: 10px 30px; background: #07c160; color: white; border: none; font-size: 18px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+        🖨️ 打印库存卡
+    </button>
+</div>
+
+<script>
+    // ✨ 升级版：防止包含 # 号的数据被截断 ✨
+    function getQueryParam(name) {
+        let searchStr = window.location.search;
+        if (window.location.hash) {
+            searchStr += "%23" + window.location.hash.substring(1);
+        }
+        const urlParams = new URLSearchParams(searchStr);
+        return urlParams.get(name) || "";
+    }
+
+    // 填充库存基础数据
+    document.getElementById('prod_name').innerText = getQueryParam('prod_name');
+    document.getElementById('spec').innerText = getQueryParam('spec');
+    document.getElementById('material').innerText = getQueryParam('material');
+    document.getElementById('standard').innerText = getQueryParam('standard');
+    document.getElementById('item_code').innerText = getQueryParam('item_code');
+    document.getElementById('location').innerText = getQueryParam('location'); 
     
+    // ✨ 新增：读取 Logo 下方备注 ✨
+    const logoRemarkText = getQueryParam('logo_remark');
+    if(logoRemarkText) {
+        document.getElementById('logo_remark').innerText = logoRemarkText;
+    }
+
+    const customUnit = getQueryParam('unit');
+    if(customUnit) document.getElementById('unit').innerText = customUnit;
+
+    const customRemark = getQueryParam('remark');
+    if(customRemark) document.getElementById('remark').innerText = customRemark;
+
+    // 建卡日期自动生成今天
+    var today = new Date();
+    var dateStr = today.getFullYear() + "-" + (today.getMonth() + 1).toString().padStart(2, '0') + "-" + today.getDate().toString().padStart(2, '0');
+    document.getElementById('maker_date').innerText = dateStr;
+
+    // 生成右上角条形码
+    const currentItemCode = getQueryParam('item_code');
+    if(currentItemCode) {
+        JsBarcode("#barcode", currentItemCode, {
+            format: "CODE128", 
+            width: 1.2,        
+            height: 40,        
+            displayValue: true,
+            fontSize: 12,      
+            margin: 5          
+        });
+    }
+
+    // 延迟 0.8秒（等待条形码渲染完成）后，自动唤起浏览器打印窗口
+    setTimeout(function() {
+        window.print();
+    }, 800);
+</script>
+</body>
+</html>
