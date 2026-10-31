@@ -64,7 +64,7 @@
             margin: 0 0 10px 0;
         }
         .card-name {
-            font-size: 22px;
+            font-size: 26px;
             font-weight: bold;
             letter-spacing: 5px;
             margin: 0;
@@ -93,10 +93,11 @@
         /* 三行基础信息增加高度，长文本仍可继续撑开，不截断。 */
         .info-table { break-inside: avoid; }
         .info-table tr { height: 64px; }
-        .info-table td { padding: 8px 4px; line-height: 1.45; }
+        .info-table td { padding: 8px 4px; line-height: 1.45; font-size: 16px; }
         .info-table td[rowspan="2"] { height: 128px; }
-        #spec { font-size: 15px; }
-        #remark { font-size: 12px; text-align: left; white-space: pre-wrap; }
+        #prod_name { font-size: 18px; font-weight: bold; }
+        #spec { font-size: 18px; }
+        #remark { font-size: 16px; text-align: left; white-space: pre-wrap; }
         .footer-signatures { break-inside: avoid; }
         /* 底部签字栏 */
         .footer-signatures {
@@ -1040,7 +1041,7 @@ var qrcodegen;
     }
     // 企业微信“等级”的实际参数名为 remark；不要把 item_code 当作等级。
     setText('product_grade', getQueryParam('remark'));
-    // 右侧卡片备注默认空白；有独立备注时可另传 card_remark。
+    // 企业微信新增的“管件概况”，显示在右侧卡片备注格。
     setText('remark', getQueryParam('card_remark'));
     if (getQueryParam('unit')) setText('unit', getQueryParam('unit'));
     const today = new Date();
@@ -1051,7 +1052,7 @@ var qrcodegen;
     // logo_remark 在原链接中已是：非标翻边数据补充 + 一个半角空格 + 备注。
     // 直接复用原字段结果，不重新计算规格、不修改符号、不清理空格。
     // 不再读取旧 item_code / qr_text，避免旧演示文字覆盖正式产品信息。
-    const qrFields = ['prod_name', 'spec', 'material', 'remark', 'standard', 'location', 'logo_remark'];
+    const qrFields = ['prod_name', 'spec', 'material', 'remark', 'standard', 'location', 'logo_remark', 'card_remark'];
     const qrText = qrFields.map(getQueryParam).join('');
     let qrError = '';
     if (qrText) {
